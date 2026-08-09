@@ -128,7 +128,9 @@
   function mountFilters() {
     var box = $("[data-filters]");
     if (!box) return;
-    var cats = [{ id: "all", name: "Todo", emoji: "✿" }].concat(data.categories || []);
+    var visibles = (data.categories || []).filter(function (c) { return c.active !== false; });
+    var cats = [{ id: "all", name: "Todo", emoji: "✿" }].concat(visibles);
+    if (!visibles.some(function (c) { return c.id === activeCat; })) activeCat = "all";
     box.innerHTML = cats.map(function (c) {
       return '<button type="button" class="chip' + (c.id === activeCat ? " is-active" : "") +
         '" data-cat="' + esc(c.id) + '"><span>' + esc(c.emoji || "") + '</span>' + esc(c.name) + "</button>";
@@ -179,6 +181,7 @@
     var box = $("[data-products]");
     if (!box) return;
     var list = (data.products || []).filter(function (p) {
+      if (!S.catActiva(data, p.category)) return false;   // categoría apagada desde el panel
       return activeCat === "all" || p.category === activeCat;
     });
     if (!list.length) {

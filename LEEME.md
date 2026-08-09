@@ -34,7 +34,7 @@ Entra al panel → pestaña **Contenido**:
 |---|---|
 | **Pedidos** | Ver los pedidos, cambiar su estado, ver el diseño de las franelas, exportarlos. |
 | **Productos** | Agregar, editar, duplicar, reordenar y borrar productos. Sube fotos (se comprimen solas). |
-| **Categorías** | Los filtros que ve el cliente arriba del catálogo. |
+| **Categorías** | Los filtros que ve el cliente arriba del catálogo. Cada una tiene un **interruptor** para mostrarla u ocultarla sin borrar nada. |
 | **Franelas** | Precio base, colores, tallas con sus medidas y zonas de estampado. |
 | **Contenido** | Nombre, portada, contacto, envíos, pagos, "nosotros", preguntas y clave. |
 | **Publicar** | Descargar el archivo para que los cambios se vean en internet + respaldos. |
@@ -85,6 +85,21 @@ Si administras desde el teléfono y también desde la computadora, tendrás que 
 
 Panel → **Publicar** → **Descargar el archivo** → súbelo a la carpeta `lib/` de tu hosting o de
 GitHub, reemplazando el `manifest.js` que está.
+
+---
+
+### Ocultar una categoría sin borrarla
+
+En **Categorías**, cada fila tiene un interruptor rosado a la derecha:
+
+- **Encendido** → se ve en la tienda.
+- **Apagado** → desaparece del catálogo: ni el filtro ni sus productos, tampoco en «Todo».
+  La fila queda atenuada y marcada como *oculta*.
+
+Sirve para cuando se te acaba el inventario de algo, o para preparar una categoría nueva con
+calma antes de mostrarla. Nada se borra: al volver a encenderla reaparece todo tal cual estaba.
+
+Acuérdate de pulsar **Publicar en la web** para que el cambio les llegue a tus clientes.
 
 ---
 

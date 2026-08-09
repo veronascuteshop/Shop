@@ -477,13 +477,19 @@
     var box = $("[data-cats-list]"); if (!box) return;
     var list = data.categories || [];
     box.innerHTML = list.map(function (c, i) {
-      return '<div class="list-item">' +
+      var visible = c.active !== false;
+      var cuantos = (data.products || []).filter(function (p) { return p.category === c.id; }).length;
+      return '<div class="list-item' + (visible ? "" : " is-hidden") + '">' +
         '<div class="list-thumb" style="font-size:1.6rem">' +
           '<input value="' + esc(c.emoji || "") + '" data-cemoji="' + i + '" maxlength="4" style="width:100%;height:100%;text-align:center;border:0;background:transparent;font-size:1.5rem" aria-label="Emoji" />' +
         "</div>" +
         '<div class="list-info"><input value="' + esc(c.name) + '" data-cname="' + i + '" style="padding:.5rem .7rem;border:2px solid var(--line);border-radius:12px;font-weight:700" aria-label="Nombre de la categoría" />' +
-        "<small>" + (data.products || []).filter(function (p) { return p.category === c.id; }).length + " producto(s)</small></div>" +
+          "<small>" + cuantos + " producto(s) · " +
+          (visible ? "se ve en la tienda" : "<b style='color:#b02a4d'>oculta</b>") + "</small></div>" +
         '<div class="list-actions">' +
+          '<button class="switch' + (visible ? " is-on" : "") + '" type="button" role="switch" aria-checked="' + visible +
+            '" data-ctoggle="' + i + '" title="' + (visible ? "Ocultar de la tienda" : "Mostrar en la tienda") +
+            '" aria-label="' + (visible ? "Ocultar" : "Mostrar") + " la categoría " + esc(c.name) + '"><span class="switch-knob"></span></button>' +
           '<button class="tiny-btn" type="button" data-cmove="' + i + '" data-dir="-1" ' + (i === 0 ? "disabled" : "") + '>↑</button>' +
           '<button class="tiny-btn" type="button" data-cmove="' + i + '" data-dir="1" ' + (i === list.length - 1 ? "disabled" : "") + '>↓</button>' +
           '<button class="tiny-btn danger" type="button" data-cdel="' + i + '">Borrar</button>' +
@@ -505,6 +511,16 @@
       });
       box.addEventListener("click", function (e) {
         var t;
+        if ((t = e.target.closest("[data-ctoggle]"))) {
+          var ci = parseInt(t.getAttribute("data-ctoggle"), 10);
+          var cat = data.categories[ci];
+          cat.active = cat.active === false;          // apagada → encendida y viceversa
+          save(true); renderCats();
+          toast(cat.active
+            ? "«" + cat.name + "» vuelve a verse en la tienda"
+            : "«" + cat.name + "» quedó oculta. Publica para que se aplique.", "ok");
+          return;
+        }
         if ((t = e.target.closest("[data-cdel]"))) {
           var i = parseInt(t.getAttribute("data-cdel"), 10);
           var used = (data.products || []).filter(function (p) { return p.category === data.categories[i].id; }).length;
@@ -523,7 +539,7 @@
     if (nw) nw.addEventListener("click", function () {
       var name = prompt("Nombre de la categoría:", "Nueva categoría");
       if (!name) return;
-      data.categories.push({ id: slug(name) + "-" + Math.random().toString(36).slice(2, 5), name: name, emoji: "✿" });
+      data.categories.push({ id: slug(name) + "-" + Math.random().toString(36).slice(2, 5), name: name, emoji: "✿", active: true });
       save(true); renderCats();
     });
   }
