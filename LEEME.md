@@ -155,7 +155,7 @@ Si más adelante compras un dominio propio, se puede conectar desde esa misma pa
 
 La carpeta `tools/` es solo para pruebas locales: **no hace falta subirla**.
 
-**Cada vez que subas archivos nuevos**, cambia el número `?v=20260808` por la fecha del día
+**Cada vez que subas archivos nuevos**, cambia el número `?v=20260809` por la fecha del día
 en `index.html` y en `admin.html` (búscalo con Ctrl+F, aparece unas 8 veces). Eso obliga al
 navegador de tus clientes a cargar la versión nueva en vez de la guardada en caché.
 
