@@ -922,8 +922,8 @@
     var texto, clase, corto;
     if (!conectado) {
       clase = "off";
-      texto = "Sin conectar con GitHub — por ahora hay que subir el archivo a mano.";
-      corto = "Sin conectar";
+      texto = "Toca «Publicar en la web» y te guío para dejarlo listo (una sola vez).";
+      corto = "Falta conectar";
     } else if (pendiente) {
       clase = "pending";
       texto = "Tienes cambios sin publicar." + (st.fecha ? " Última publicación " + cuando(st.fecha) + "." : "");
@@ -951,12 +951,7 @@
     if (publicando) return;
 
     if (!window.VCS_GH || !VCS_GH.isReady()) {
-      irAPublicar();
-      var box = $("[data-gh-box]");
-      if (box) box.hidden = false;
-      toast("Primero conecta el panel con GitHub (es una sola vez)", "err");
-      var first = $('[data-gh="owner"]');
-      if (first) first.focus();
+      abrirAsistenteGitHub(function () { publicarAhora(btn); });   // conecta y sigue publicando
       return;
     }
 
@@ -1023,6 +1018,115 @@
     })();
   }
 
+  /* ---------------------------------------------------------------------
+     Asistente de conexión: dos toques y listo.
+     1) Abre GitHub con todo preparado para crear la clave.
+     2) Se pega la clave (o se toca «Pegar») y se comprueba sola.
+     --------------------------------------------------------------------- */
+  function enlaceCrearClave() {
+    var c = VCS_GH.cfg();
+    return "https://github.com/settings/tokens/new" +
+      "?description=" + encodeURIComponent("Panel de " + ((data.settings || {}).name || "mi tienda")) +
+      "&scopes=public_repo";
+  }
+
+  function abrirAsistenteGitHub(alConectar) {
+    var c = VCS_GH.cfg();
+    openEdit(
+      '<div class="modal-head"><div><span class="kicker">Una sola vez</span>' +
+      "<h3>Conectar para publicar</h3></div>" +
+      '<button class="icon-btn" type="button" data-edit-close aria-label="Cerrar">✕</button></div>' +
+
+      '<div class="rows">' +
+        '<p class="sub" style="margin:0">Para que el botón «Publicar» funcione, GitHub necesita darte una clave. ' +
+        "Son dos pasos y no hay que volver a hacerlo.</p>" +
+
+        '<div class="paso">' +
+          '<span class="paso-n">1</span>' +
+          "<div><b>Crea la clave en GitHub</b>" +
+          '<p class="sub">Se abre GitHub. Baja del todo y toca el botón verde <b>«Generate token»</b>. ' +
+          'Antes, en <b>Expiration</b> elige <b>«No expiration»</b> para que no se venza.</p>' +
+          '<a class="btn btn-primary btn-sm" href="' + enlaceCrearClave() + '" target="_blank" rel="noopener">Abrir GitHub ↗</a>' +
+          "</div>" +
+        "</div>" +
+
+        '<div class="paso">' +
+          '<span class="paso-n">2</span>' +
+          "<div><b>Pega la clave aquí</b>" +
+          '<p class="sub">GitHub te la muestra una sola vez. Cópiala y pégala.</p>' +
+          '<div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap">' +
+            '<input data-wiz-token type="password" placeholder="ghp_..." autocomplete="off" ' +
+            'style="flex:1;min-width:160px;padding:.7rem .9rem;border:2px solid var(--line);border-radius:14px;font-family:monospace" />' +
+            '<button class="tiny-btn solid" type="button" data-wiz-pegar>Pegar</button>' +
+          "</div>" +
+          '<p class="gh-result" data-wiz-result hidden style="margin-top:.6rem"></p>' +
+          "</div>" +
+        "</div>" +
+
+        '<details class="gh-help"><summary>¿Es seguro?</summary>' +
+        '<p class="sub" style="margin-top:.5rem">La clave que se crea solo puede editar tus repositorios ' +
+        '<b>públicos</b>. No da acceso a tu cuenta, no puede borrarla ni ver nada privado. Se guarda ' +
+        'únicamente en este teléfono y puedes anularla cuando quieras desde GitHub → Settings → ' +
+        'Developer settings → <b>Revoke</b>.</p></details>' +
+      "</div>",
+
+      function (card) {
+        var input = $("[data-wiz-token]", card);
+        var res = $("[data-wiz-result]", card);
+        var probando = false;
+
+        function decir(msg, ok) {
+          res.hidden = false;
+          res.textContent = msg;
+          res.className = "gh-result " + (ok ? "ok" : "err");
+        }
+
+        function intentar() {
+          var v = (input.value || "").trim();
+          if (v.length < 20 || probando) return;
+          probando = true;
+          decir("Comprobando…", true);
+          var cur = VCS_GH.cfg();
+          cur.token = v;
+          cur.owner = cur.owner || "veronascuteshop";
+          cur.repo = cur.repo || "Shop";
+          cur.branch = cur.branch || "main";
+          cur.path = cur.path || "lib/manifest.js";
+          VCS_GH.saveCfg(cur);
+          VCS_GH.test(function (err, info) {
+            probando = false;
+            if (err) { decir(err, false); return; }
+            decir("¡Conectado con " + info.repo + "! ✓", true);
+            pintarEstadoPublicacion();
+            setTimeout(function () {
+              closeEdit();
+              if (alConectar) alConectar();
+            }, 900);
+          });
+        }
+
+        input.addEventListener("input", function () { setTimeout(intentar, 250); });
+
+        $("[data-wiz-pegar]", card).addEventListener("click", function () {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            navigator.clipboard.readText().then(function (t) {
+              input.value = (t || "").trim();
+              intentar();
+            }).catch(function () {
+              input.focus();
+              decir("Tu navegador no deja pegar solo: mantén pulsado el recuadro y elige «Pegar».", false);
+            });
+          } else {
+            input.focus();
+            decir("Mantén pulsado el recuadro y elige «Pegar».", false);
+          }
+        });
+
+        setTimeout(function () { input.focus(); }, 300);
+      }
+    );
+  }
+
   function irAPublicar() {
     var tab = $('[data-tab="publicar"]');
     if (tab) tab.click();
@@ -1032,6 +1136,9 @@
     var box = $("[data-gh-box]");
     var toggle = $("[data-gh-toggle]");
     if (toggle && box) toggle.addEventListener("click", function () { box.hidden = !box.hidden; });
+
+    var asistente = $("[data-gh-wizard]");
+    if (asistente) asistente.addEventListener("click", function () { abrirAsistenteGitHub(null); });
 
     if (!window.VCS_GH) return;
 

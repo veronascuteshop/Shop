@@ -224,6 +224,20 @@ body.admin { background: #fdf7fa; }
 .side-publish-state.pending { color: #b07600; }
 .side-publish-state.ok { color: #1f9d76; }
 
+/* pasos del asistente de conexión */
+.paso {
+  display: grid; grid-template-columns: 34px 1fr; gap: .8rem; align-items: start;
+  padding: 1rem; border-radius: var(--r); background: #fffafd; border: 2px solid var(--line);
+}
+.paso-n {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+  display: grid; place-items: center;
+  font-family: var(--display); font-weight: 600; font-size: 1.05rem;
+}
+.paso b { font-family: var(--display); font-weight: 600; font-size: 1.02rem; }
+.paso .sub { margin: .25rem 0 .7rem; }
+
 .gh-box {
   margin-top: 1.1rem; padding: 1.1rem; border-radius: var(--r);
   border: 2px dashed var(--line-strong); background: #fffafd;

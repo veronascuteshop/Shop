@@ -79,23 +79,22 @@ un aviso que te dice cómo está todo:
 Pulsas el botón y listo: en menos de un minuto la web ya muestra los cambios. No hay que
 descargar ni subir nada.
 
-### Conectarlo (una sola vez, 2 minutos)
+### Conectarlo (una sola vez, dos toques)
 
-Panel → **Publicar** → **Conexión con GitHub**. Los datos vienen casi todos puestos; solo falta
-la clave de acceso:
+La primera vez que pulses **«Publicar en la web»** se abre un asistente:
 
-1. En **github.com** → tu foto → **Settings** → abajo del todo **Developer settings**.
-2. **Personal access tokens** → **Fine-grained tokens** → **Generate new token**.
-3. Nombre: *panel tienda*. En **Expiration** ponle la duración más larga que te deje.
-4. **Repository access** → **Only select repositories** → marca **Shop**.
-5. **Permissions → Repository permissions** → busca **Contents** → **Read and write**.
-   No le des ningún otro permiso.
-6. **Generate token**, cópialo y pégalo en el panel. Pulsa **Probar conexión**.
+1. Toca **«Abrir GitHub»**. Se abre la página con todo preparado. Solo tienes que cambiar
+   **Expiration** a **«No expiration»** (para que no se venza) y bajar hasta el botón verde
+   **«Generate token»**.
+2. Copia la clave que te muestra y vuelve al panel. Toca **«Pegar»**.
 
-**Sobre esa clave:** solo sirve para editar archivos de ese repositorio. No da acceso a tu cuenta
-de GitHub, no puede borrarla ni tocar tus otros proyectos. Se guarda únicamente en el navegador
-donde la pegaste — no viaja a la web ni queda dentro de los respaldos. Si algún día quieres
-anularla, en esa misma pantalla de GitHub pulsas **Revoke** y ya.
+Se comprueba sola y, si está bien, **sigue publicando donde lo dejaste**. No hay que volver
+a hacerlo nunca más en ese teléfono.
+
+**Sobre esa clave:** solo puede editar tus repositorios **públicos**. No da acceso a tu cuenta,
+no puede borrarla ni ver nada privado. Se guarda únicamente en el teléfono donde la pegaste —
+no viaja a la web ni queda dentro de los respaldos. Para anularla: GitHub → *Settings* →
+*Developer settings* → **Revoke**.
 
 Si administras desde el teléfono y también desde la computadora, tendrás que pegarla en cada uno
 (o generar una para cada dispositivo, que es más ordenado).
