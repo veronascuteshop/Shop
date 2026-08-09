@@ -757,6 +757,61 @@
   }
 
   /* =============================================================== CONTENIDO */
+  function pintarLogo() {
+    var zona = $("[data-logo-zone]");
+    if (!zona) return;
+    var logo = (data.settings || {}).logo || "";
+    zona.innerHTML = (logo
+      ? '<img src="' + esc(logo) + '" alt="Logo de la tienda" ' +
+        'style="max-height:160px;max-width:100%;margin:0 auto .7rem;display:block;' +
+        'background:repeating-conic-gradient(#f3e8ee 0% 25%, #fff 0% 50%) 50%/16px 16px;border-radius:14px" />'
+      : "🎀 Sube el logo de tu tienda") +
+      '<div style="display:flex;gap:.4rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem">' +
+        '<label class="tiny-btn solid">' + (logo ? "Cambiar logo" : "Elegir logo") +
+        '<input type="file" accept="image/*" hidden data-logo-file /></label>' +
+        (logo ? '<button class="tiny-btn danger" type="button" data-logo-clear>Quitar logo</button>' : "") +
+      "</div>";
+  }
+
+  function bindLogo() {
+    var zona = $("[data-logo-zone]");
+    if (!zona) return;
+    pintarLogo();
+
+    zona.addEventListener("change", function (e) {
+      var input = e.target.closest("[data-logo-file]");
+      if (!input) return;
+      var f = input.files && input.files[0];
+      input.value = "";
+      if (!f) return;
+
+      zona.insertAdjacentHTML("afterbegin", '<p class="sub" data-logo-cargando>Procesando el logo…</p>');
+      S.readImage(f, 700, 0.92, function (err, out) {
+        var msg = $("[data-logo-cargando]"); if (msg) msg.remove();
+        if (err) { toast(err, "err"); return; }
+
+        var quitar = $("[data-logo-nobg]") && $("[data-logo-nobg]").checked;
+        var guardar = function (url) {
+          data.settings.logo = url;
+          save(true);
+          pintarLogo();
+          var kb = Math.round(url.length * 0.75 / 1024);
+          toast("Logo guardado (" + kb + " KB). Pulsa «Publicar en la web» para que lo vean tus clientes.", "ok");
+        };
+        if (quitar) S.quitarFondo(out.dataUrl, 90, function (e2, limpio) { guardar(limpio || out.dataUrl); });
+        else guardar(out.dataUrl);
+      });
+    });
+
+    zona.addEventListener("click", function (e) {
+      if (!e.target.closest("[data-logo-clear]")) return;
+      if (!confirm("¿Quitar el logo y volver al dibujo por defecto?")) return;
+      data.settings.logo = "";
+      save(true);
+      pintarLogo();
+    });
+  }
+
   function bindSettings() {
     $$("[data-set]").forEach(function (el) {
       var key = el.getAttribute("data-set");
@@ -1067,6 +1122,7 @@
     safe(renderZones, "renderZones");
     safe(bindTees, "bindTees");
     safe(bindSettings, "bindSettings");
+    safe(bindLogo, "bindLogo");
     safe(renderSteps, "renderSteps");
     safe(renderFaqs, "renderFaqs");
     safe(bindContentLists, "bindContentLists");

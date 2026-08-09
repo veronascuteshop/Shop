@@ -87,6 +87,22 @@
       $$(sel).forEach(function (el) { el.textContent = map[sel]; });
     });
 
+    // logo propio: manda sobre el dibujo por defecto de la portada
+    var heroLogo = $("[data-hero-logo]");
+    if (heroLogo) {
+      var hayLogo = !!st.logo;
+      heroLogo.hidden = !hayLogo;
+      if (hayLogo) {
+        heroLogo.src = st.logo;
+        heroLogo.alt = ((st.name || "") + " " + (st.name2 || "")).trim();
+        var orb = $(".hero-orb"), cara = $(".hero-orb-face");
+        if (orb) orb.style.display = "none";
+        if (cara) cara.style.display = "none";
+        var art = $(".hero-art");
+        if (art) art.setAttribute("aria-hidden", "false");
+      }
+    }
+
     document.title = ((st.name || "") + " " + (st.name2 || "")).trim() + " · " + (st.tagline || "");
     $$("[data-year]").forEach(function (el) { el.textContent = new Date().getFullYear(); });
     $$("[data-link-instagram]").forEach(function (a) { if (st.instagram) a.href = st.instagram; });

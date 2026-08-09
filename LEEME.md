@@ -28,6 +28,25 @@ Entra al panel → pestaña **Contenido**:
 
 ---
 
+## 2.5 Poner tu logo
+
+Panel → **Contenido** → **Identidad** → **Logo de la tienda** → *Elegir logo*.
+
+Se ve **grande en la portada** de la tienda, en lugar del dibujo por defecto.
+
+- La casilla **«Quitar el fondo blanco»** viene marcada: borra el fondo liso que rodea al
+  dibujo para que se integre con el rosado de la página. Solo borra desde los bordes hacia
+  dentro, así que los blancos internos (como la cinta de *CUTE SHOP*) **no se tocan**.
+  Si el resultado no te gusta, desmarca la casilla y vuelve a subirlo.
+- Se achica solo a 700 píxeles, no te preocupes por el peso de la foto.
+- El gatito pequeño de la barra de arriba **se queda como está**: tu logo completo lleva el
+  nombre y la cinta, y a 42 píxeles no se leería nada. El dibujito está hecho a partir de tu
+  logo, así que combinan.
+
+Para quitarlo y volver al dibujo: *Quitar logo*.
+
+---
+
 ## 3. Cómo funciona el panel
 
 | Pestaña | Para qué sirve |
