@@ -43,15 +43,48 @@ Entra al panel → pestaña **Contenido**:
 
 ## 4. ⚠️ Lo más importante: publicar los cambios
 
-Cuando editas algo en el panel, **se guarda en tu navegador**. Lo ves al instante en tu tienda,
-pero **tus clientes todavía ven la versión anterior**. Para publicarlo:
+Cuando editas algo en el panel **se guarda solo** en tu navegador y lo ves al instante. Pero tus
+clientes siguen viendo la versión anterior hasta que **publiques**.
 
-1. Panel → **Publicar** → botón **«Descargar manifest.js»**.
-2. Se descarga un archivo llamado `manifest.js`.
-3. Súbelo a tu hosting dentro de la carpeta **`lib/`**, reemplazando el que está.
-4. Listo: ahora todo el mundo ve los cambios.
+### Con un botón (recomendado)
 
-> Consejo: haz varios cambios juntos y publica una sola vez.
+En la barra izquierda del panel, abajo, tienes el botón **«Publicar en la web»**, y justo debajo
+un aviso que te dice cómo está todo:
+
+| Aviso | Qué significa |
+|---|---|
+| **Todo publicado ✓** | No hay nada pendiente. |
+| **Cambios sin publicar** | Editaste algo. Pulsa el botón (se pone resaltado). |
+| **Sin conectar** | Falta conectar el panel con GitHub una sola vez (abajo te explico). |
+
+Pulsas el botón y listo: en menos de un minuto la web ya muestra los cambios. No hay que
+descargar ni subir nada.
+
+### Conectarlo (una sola vez, 2 minutos)
+
+Panel → **Publicar** → **Conexión con GitHub**. Los datos vienen casi todos puestos; solo falta
+la clave de acceso:
+
+1. En **github.com** → tu foto → **Settings** → abajo del todo **Developer settings**.
+2. **Personal access tokens** → **Fine-grained tokens** → **Generate new token**.
+3. Nombre: *panel tienda*. En **Expiration** ponle la duración más larga que te deje.
+4. **Repository access** → **Only select repositories** → marca **Shop**.
+5. **Permissions → Repository permissions** → busca **Contents** → **Read and write**.
+   No le des ningún otro permiso.
+6. **Generate token**, cópialo y pégalo en el panel. Pulsa **Probar conexión**.
+
+**Sobre esa clave:** solo sirve para editar archivos de ese repositorio. No da acceso a tu cuenta
+de GitHub, no puede borrarla ni tocar tus otros proyectos. Se guarda únicamente en el navegador
+donde la pegaste — no viaja a la web ni queda dentro de los respaldos. Si algún día quieres
+anularla, en esa misma pantalla de GitHub pulsas **Revoke** y ya.
+
+Si administras desde el teléfono y también desde la computadora, tendrás que pegarla en cada uno
+(o generar una para cada dispositivo, que es más ordenado).
+
+### A mano (si no quieres conectar nada)
+
+Panel → **Publicar** → **Descargar el archivo** → súbelo a la carpeta `lib/` de tu hosting o de
+GitHub, reemplazando el `manifest.js` que está.
 
 ---
 
@@ -131,11 +164,8 @@ Si más adelante compras un dominio propio, se puede conectar desde esa misma pa
 
 ### Publicar cambios cuando usas GitHub
 
-1. Panel → **Publicar** → **Descargar manifest.js**.
-2. En GitHub, entra a la carpeta **`lib`** → haz clic en el archivo **`manifest.js`** →
-   botón del lápiz ✏️ → borra todo y pega el contenido nuevo → **Commit changes**.
-   (O usa **Add file → Upload files** y arrastra el archivo descargado encima.)
-3. En 1–2 minutos la web ya muestra los cambios.
+Pulsa **«Publicar en la web»** en el panel. Eso sube el archivo a GitHub por ti y la web se
+actualiza sola. Ver la sección 4 para conectarlo la primera vez.
 
 > El repositorio es **público**: cualquiera puede leer el código, incluida la clave del panel.
 > Cámbiala por una tuya en *Contenido → Seguridad* y recuerda que no es seguridad real.

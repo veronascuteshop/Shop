@@ -11,7 +11,7 @@
    ============================================================================= */
 "use strict";
 
-var CACHE = "verona-v2-20260809";
+var CACHE = "verona-v3-20260809";
 
 var SHELL = [
   "./",
@@ -25,6 +25,7 @@ var SHELL = [
   "./lib/store.js",
   "./lib/tee.js",
   "./lib/pwa.js",
+  "./lib/github.js",
   "./lib/gsap.min.js",
   "./lib/ScrollTrigger.min.js",
   "./manifest.webmanifest",
@@ -88,9 +89,13 @@ self.addEventListener("fetch", function (e) {
     return;
   }
 
+  /* El contenido de la tienda se pide siempre fresco: así, apenas publicas
+     desde el panel, los clientes ven el cambio sin esperar el caché. */
+  var pedido = /\/lib\/manifest\.js/.test(url.pathname) ? new Request(req, { cache: "reload" }) : req;
+
   /* Propio: primero internet, si falla lo guardado */
   e.respondWith(
-    fetch(req).then(function (res) {
+    fetch(pedido).then(function (res) {
       if (res && res.ok) {
         var copy = res.clone();
         caches.open(CACHE).then(function (c) { c.put(req, copy); });

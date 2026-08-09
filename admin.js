@@ -40,6 +40,7 @@
     var run = function () {
       var res = S.write(data);
       if (!res.ok) toast(res.error, "err"); else flashSaved();
+      try { pintarEstadoPublicacion(); } catch (e) {}
     };
     if (now) run(); else saveTimer = setTimeout(run, 350);
   }
@@ -86,6 +87,7 @@
       $$("[data-tab]", nav).forEach(function (x) { x.classList.toggle("is-active", x === b); });
       $$("[data-panel]").forEach(function (p) { p.classList.toggle("is-active", p.getAttribute("data-panel") === id); });
       window.scrollTo({ top: 0, behavior: "smooth" });
+      try { pintarEstadoPublicacion(); } catch (e) {}
     });
     var out = $("[data-logout]");
     if (out) out.addEventListener("click", function () { S.logout(); location.reload(); });
@@ -773,6 +775,175 @@
   }
 
   /* ================================================================ PUBLICAR */
+
+  /* Recuerda qué versión del contenido fue la última publicada, para poder
+     avisar "hay cambios sin publicar" sin tener que preguntarle a GitHub. */
+  var PUB_KEY = "vcs_pub_v1";
+  function pubState() {
+    try { return JSON.parse(localStorage.getItem(PUB_KEY) || "{}"); } catch (e) { return {}; }
+  }
+  function setPubState(s) {
+    try { localStorage.setItem(PUB_KEY, JSON.stringify(s)); } catch (e) {}
+  }
+  /* Se compara sólo el contenido: el archivo lleva fecha dentro y esa cambia siempre */
+  function huellaActual() {
+    return window.VCS_GH ? VCS_GH.fingerprint(S.contentJSON(data)) : "";
+  }
+  function hayCambiosSinPublicar() {
+    return pubState().huella !== huellaActual();
+  }
+
+  function cuando(iso) {
+    if (!iso) return "";
+    var d = new Date(iso), min = Math.round((Date.now() - d.getTime()) / 60000);
+    if (isNaN(d)) return "";
+    if (min < 1) return "hace un momento";
+    if (min < 60) return "hace " + min + " min";
+    if (min < 1440) return "hace " + Math.round(min / 60) + " h";
+    return "el " + d.toLocaleDateString("es-VE", { day: "numeric", month: "short" });
+  }
+
+  function pintarEstadoPublicacion() {
+    var st = pubState();
+    var conectado = window.VCS_GH && VCS_GH.isReady();
+    var pendiente = hayCambiosSinPublicar();
+
+    var texto, clase, corto;
+    if (!conectado) {
+      clase = "off";
+      texto = "Sin conectar con GitHub — por ahora hay que subir el archivo a mano.";
+      corto = "Sin conectar";
+    } else if (pendiente) {
+      clase = "pending";
+      texto = "Tienes cambios sin publicar." + (st.fecha ? " Última publicación " + cuando(st.fecha) + "." : "");
+      corto = "Cambios sin publicar";
+    } else {
+      clase = "ok";
+      texto = "Todo publicado ✓" + (st.fecha ? " · " + cuando(st.fecha) : "");
+      corto = "Todo publicado ✓";
+    }
+
+    var box = $("[data-pub-state]");
+    if (box) {
+      box.className = "pub-state " + clase;
+      $("[data-pub-text]").textContent = texto;
+    }
+    var side = $("[data-side-pub-state]");
+    if (side) { side.textContent = corto; side.className = "side-publish-state " + clase; }
+
+    $$("[data-publish-now]").forEach(function (b) { b.classList.toggle("is-pending", pendiente && conectado); });
+  }
+
+  /* Un solo botón: arma el archivo y lo sube al repositorio */
+  var publicando = false;
+  function publicarAhora(btn) {
+    if (publicando) return;
+
+    if (!window.VCS_GH || !VCS_GH.isReady()) {
+      irAPublicar();
+      var box = $("[data-gh-box]");
+      if (box) box.hidden = false;
+      toast("Primero conecta el panel con GitHub (es una sola vez)", "err");
+      var first = $('[data-gh="owner"]');
+      if (first) first.focus();
+      return;
+    }
+
+    publicando = true;
+    var labels = $$("[data-publish-now]");
+    labels.forEach(function (b) { b.disabled = true; });
+    var side = $("[data-side-publish-label]");
+    var antes = side ? side.textContent : "";
+    if (side) side.textContent = "Publicando…";
+
+    var contenido = S.buildManifest(data);
+    var huella = huellaActual();
+
+    VCS_GH.publish(contenido, "Actualiza el contenido de la tienda desde el panel", function (err, res) {
+      publicando = false;
+      labels.forEach(function (b) { b.disabled = false; });
+      if (side) side.textContent = antes || "Publicar en la web";
+
+      if (err) { toast(err, "err"); pintarEstadoPublicacion(); return; }
+
+      setPubState({ huella: huella, fecha: new Date().toISOString(), commit: res.commit });
+      pintarEstadoPublicacion();
+      toast("¡Publicado! La web se actualiza en menos de un minuto ✿", "ok");
+    });
+  }
+
+  function irAPublicar() {
+    var tab = $('[data-tab="publicar"]');
+    if (tab) tab.click();
+  }
+
+  function bindGitHub() {
+    var box = $("[data-gh-box]");
+    var toggle = $("[data-gh-toggle]");
+    if (toggle && box) toggle.addEventListener("click", function () { box.hidden = !box.hidden; });
+
+    if (!window.VCS_GH) return;
+
+    // valores por defecto según dónde esté publicada la página
+    var c = VCS_GH.cfg();
+    if (!c.owner && /github\.io$/.test(location.hostname)) {
+      c.owner = location.hostname.replace(".github.io", "");
+      var seg = location.pathname.split("/").filter(Boolean);
+      if (seg.length) c.repo = seg[0];
+    }
+    if (!c.owner) c.owner = "veronascuteshop";
+    if (!c.repo) c.repo = "Shop";
+    if (!c.branch) c.branch = "main";
+    if (!c.path) c.path = "lib/manifest.js";
+
+    $$("[data-gh]").forEach(function (el) {
+      var k = el.getAttribute("data-gh");
+      el.value = c[k] || "";
+      el.addEventListener("input", function () {
+        var cur = VCS_GH.cfg();
+        cur[k] = el.value.trim();
+        VCS_GH.saveCfg(cur);
+        pintarEstadoPublicacion();
+      });
+    });
+    VCS_GH.saveCfg(Object.assign({}, VCS_GH.cfg(), {
+      owner: c.owner || "", repo: c.repo || "", branch: c.branch, path: c.path
+    }));
+
+    var res = $("[data-gh-result]");
+    function decir(msg, ok) {
+      if (!res) return;
+      res.hidden = false;
+      res.textContent = msg;
+      res.className = "gh-result " + (ok ? "ok" : "err");
+    }
+
+    var test = $("[data-gh-test]");
+    if (test) test.addEventListener("click", function () {
+      decir("Probando…", true);
+      VCS_GH.test(function (err, info) {
+        if (err) { decir(err, false); return; }
+        decir("Conectado con " + info.repo + " (rama " + info.branch + ") ✓", true);
+        pintarEstadoPublicacion();
+      });
+    });
+
+    var forget = $("[data-gh-forget]");
+    if (forget) forget.addEventListener("click", function () {
+      if (!confirm("¿Borrar la clave de acceso de este navegador?")) return;
+      var cur = VCS_GH.cfg();
+      delete cur.token;
+      VCS_GH.saveCfg(cur);
+      var t = $('[data-gh="token"]'); if (t) t.value = "";
+      decir("Clave borrada de este navegador.", true);
+      pintarEstadoPublicacion();
+    });
+
+    $$("[data-publish-now]").forEach(function (b) {
+      b.addEventListener("click", function () { publicarAhora(b); });
+    });
+  }
+
   function bindPublish() {
     var exp = $("[data-export-manifest]");
     if (exp) exp.addEventListener("click", function () {
@@ -842,6 +1013,8 @@
     safe(renderFaqs, "renderFaqs");
     safe(bindContentLists, "bindContentLists");
     safe(bindPublish, "bindPublish");
+    safe(bindGitHub, "bindGitHub");
+    safe(pintarEstadoPublicacion, "pintarEstadoPublicacion");
     if (data.settings) {
       if (data.settings.accent) document.documentElement.style.setProperty("--accent", data.settings.accent);
       if (data.settings.accent2) document.documentElement.style.setProperty("--accent-2", data.settings.accent2);
