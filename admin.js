@@ -48,8 +48,28 @@
       var res = S.write(data);
       if (!res.ok) toast(res.error, "err"); else flashSaved();
       try { pintarEstadoPublicacion(); } catch (e) {}
+      try { programarPublicacionAutomatica(); } catch (e) {}
     };
     if (now) run(); else saveTimer = setTimeout(run, 350);
+  }
+
+  /* Publicar solo: unos segundos después del último cambio, sale a la web.
+     Se espera un poco para no publicar en mitad de una edición. */
+  var AUTO_KEY = "vcs_autopub";
+  var autoTimer = null;
+
+  function autoPublicarActivo() {
+    try { return localStorage.getItem(AUTO_KEY) === "1"; } catch (e) { return false; }
+  }
+
+  function programarPublicacionAutomatica() {
+    if (!autoPublicarActivo()) return;
+    if (!window.VCS_GH || !VCS_GH.isReady()) return;
+    clearTimeout(autoTimer);
+    autoTimer = setTimeout(function () {
+      if (publicando || !hayCambiosSinPublicar()) return;
+      publicarAhora(null);
+    }, 8000);
   }
 
   function saveOrders() {
@@ -760,7 +780,8 @@
   function pintarLogo() {
     var zona = $("[data-logo-zone]");
     if (!zona) return;
-    var logo = (data.settings || {}).logo || "";
+    var guardado = (data.settings || {}).logo;
+    var logo = (guardado === "none") ? "" : (guardado || "assets/logo-real.webp");
     zona.innerHTML = (logo
       ? '<img src="' + esc(logo) + '" alt="Logo de la tienda" ' +
         'style="max-height:160px;max-width:100%;margin:0 auto .7rem;display:block;' +
@@ -805,8 +826,8 @@
 
     zona.addEventListener("click", function (e) {
       if (!e.target.closest("[data-logo-clear]")) return;
-      if (!confirm("¿Quitar el logo y volver al dibujo por defecto?")) return;
-      data.settings.logo = "";
+      if (!confirm("¿Quitar el logo de la portada?")) return;
+      data.settings.logo = "none";
       save(true);
       pintarLogo();
     });
@@ -962,6 +983,62 @@
     var antes = side ? side.textContent : "";
     if (side) side.textContent = "Publicando…";
 
+    subirImagenesPendientes(function (errImg) {
+      if (errImg) {
+        publicando = false;
+        labels.forEach(function (b) { b.disabled = false; });
+        if (side) side.textContent = antes || "Publicar en la web";
+        toast(errImg, "err");
+        return;
+      }
+      publicarContenido(labels, side, antes);
+    });
+  }
+
+  /* Las fotos que aún están incrustadas se suben como archivos y en su lugar
+     queda la ruta. Así el contenido que descargan los clientes pesa poco. */
+  function subirImagenesPendientes(cb) {
+    if (!window.VCS_GH) return cb(null);
+
+    var tareas = [];
+    (data.products || []).forEach(function (p) {
+      if (p.photo && p.photo.indexOf("data:") === 0) {
+        tareas.push({ ruta: "assets/fotos/" + p.id + extensionDe(p.photo), dato: p.photo, poner: function (r) { p.photo = r; } });
+      }
+    });
+    if (data.settings && data.settings.logo && data.settings.logo.indexOf("data:") === 0) {
+      tareas.push({
+        ruta: "assets/fotos/logo" + extensionDe(data.settings.logo),
+        dato: data.settings.logo,
+        poner: function (r) { data.settings.logo = r; }
+      });
+    }
+    if (!tareas.length) return cb(null);
+
+    var side = $("[data-side-publish-label]");
+    var i = 0;
+    (function siguiente() {
+      if (i >= tareas.length) { save(true); return cb(null); }
+      var t = tareas[i];
+      if (side) side.textContent = "Subiendo foto " + (i + 1) + "/" + tareas.length + "…";
+      VCS_GH.subirImagen(t.ruta, t.dato, function (err) {
+        if (err) return cb("No se pudo subir una foto: " + err);
+        t.poner(t.ruta);
+        i++;
+        siguiente();
+      });
+    })();
+  }
+
+  function extensionDe(dataUrl) {
+    var m = /^data:image\/([a-z0-9+]+)/i.exec(dataUrl || "");
+    var t = (m && m[1] || "png").toLowerCase();
+    if (t === "jpeg") t = "jpg";
+    if (t === "svg+xml") t = "svg";
+    return "." + t;
+  }
+
+  function publicarContenido(labels, side, antes) {
     var contenido = S.buildManifest(data);
     var huella = huellaActual();
 
@@ -1139,6 +1216,21 @@
 
     var asistente = $("[data-gh-wizard]");
     if (asistente) asistente.addEventListener("click", function () { abrirAsistenteGitHub(null); });
+
+    var auto = $("[data-auto-publicar]");
+    if (auto) {
+      auto.checked = autoPublicarActivo();
+      auto.addEventListener("change", function () {
+        try { localStorage.setItem(AUTO_KEY, auto.checked ? "1" : "0"); } catch (e) {}
+        if (!auto.checked) { clearTimeout(autoTimer); toast("Publicar solo: desactivado", "ok"); return; }
+        if (!window.VCS_GH || !VCS_GH.isReady()) {
+          abrirAsistenteGitHub(function () { programarPublicacionAutomatica(); });
+          return;
+        }
+        toast("Listo: cada cambio saldrá solo a la web ✿", "ok");
+        programarPublicacionAutomatica();
+      });
+    }
 
     if (!window.VCS_GH) return;
 

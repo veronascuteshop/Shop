@@ -297,19 +297,24 @@
           <div>
             <span class="kicker">Guardar y publicar</span>
             <h2>Publicar cambios</h2>
-            <p>Tus cambios ya se ven en este navegador. Para que los vea todo el mundo, sube el archivo generado.</p>
+            <p>Lo que editas se ve al instante en este teléfono. Al publicar, lo ve todo el mundo.</p>
           </div>
         </div>
 
         <div class="box">
-          <h3>1 · Publicar con un botón</h3>
-          <p class="sub">Conecta el panel con tu GitHub una sola vez. Después, publicar es un clic
-             y la web se actualiza sola en menos de un minuto.</p>
+          <h3>1 · Publicar</h3>
+          <p class="sub">Conecta el panel una sola vez. Después, publicar es un toque —o ninguno,
+             si activas «Publicar solo»— y la web se actualiza sola en menos de un minuto.</p>
 
           <div class="pub-state" data-pub-state>
             <span class="pub-dot"></span>
             <span data-pub-text>Revisando…</span>
           </div>
+
+          <label class="auto-pub">
+            <input type="checkbox" data-auto-publicar />
+            <span><b>Publicar solo</b> — cada cambio que guardes sale a la web sin que pulses nada</span>
+          </label>
 
           <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem">
             <button class="btn btn-primary" type="button" data-publish-now>Publicar en la web 🚀</button>

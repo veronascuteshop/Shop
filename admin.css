@@ -224,6 +224,16 @@ body.admin { background: #fdf7fa; }
 .side-publish-state.pending { color: #b07600; }
 .side-publish-state.ok { color: #1f9d76; }
 
+.auto-pub {
+  display: flex; align-items: center; gap: .6rem; cursor: pointer;
+  margin-top: .7rem; padding: .7rem .9rem; border-radius: var(--r);
+  background: #fff; border: 2px solid var(--line);
+  font-size: .88rem; color: var(--ink-soft); line-height: 1.35;
+}
+.auto-pub:hover { border-color: #ffc2d2; }
+.auto-pub input { width: 20px; height: 20px; flex: none; accent-color: var(--accent); }
+.auto-pub b { color: var(--ink); }
+
 /* pasos del asistente de conexión */
 .paso {
   display: grid; grid-template-columns: 34px 1fr; gap: .8rem; align-items: start;

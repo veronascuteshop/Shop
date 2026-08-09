@@ -135,9 +135,13 @@ Acuérdate de pulsar **Publicar en la web** para que el cambio les llegue a tus 
 
 | Dónde | Cuándo se ve |
 |---|---|
-| En el navegador donde editas | **al instante**, apenas guardas (si tienes la tienda abierta en otra pestaña, se actualiza sola) |
-| En los demás teléfonos | al pulsar **Publicar en la web**, en menos de un minuto |
-| En una app ya abierta | cuando la persona vuelve a ella, se busca contenido nuevo sola |
+| En el teléfono donde editas | **al instante**, apenas guardas |
+| En los demás teléfonos | al **publicar**: aparece en menos de un minuto, sin que nadie recargue |
+| En una app abierta en otro teléfono | sola, al volver a la pantalla o como mucho en minuto y medio |
+
+**Publicar solo:** en *Publicar* hay una casilla llamada **«Publicar solo»**. Si la activas, cada
+cambio que guardes sale a la web por su cuenta unos segundos después. Así no tienes que
+acordarte de pulsar nada nunca más.
 
 Al publicar, el panel se queda comprobando la web de verdad y te avisa
 **«¡Ya está en línea!»** cuando el cambio llegó. No hay que adivinar.

@@ -11,7 +11,7 @@
    ============================================================================= */
 "use strict";
 
-var CACHE = "verona-v11-20260809";
+var CACHE = "verona-v12-20260809";
 
 var SHELL = [
   "./",
@@ -108,10 +108,14 @@ self.addEventListener("fetch", function (e) {
     } catch (e) { pedido = req; }
   }
 
+  /* Las peticiones con marca de tiempo (?t=) son consultas puntuales de
+     contenido fresco: no se guardan, si no el almacén crecería sin parar. */
+  var noGuardar = /[?&]t=\d+/.test(url.search);
+
   /* Propio: primero internet, si falla lo guardado */
   e.respondWith(
     fetch(pedido).then(function (res) {
-      if (res && res.ok) {
+      if (res && res.ok && !noGuardar) {
         var copy = res.clone();
         caches.open(CACHE).then(function (c) { c.put(req, copy); });
       }

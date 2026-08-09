@@ -87,13 +87,17 @@
       $$(sel).forEach(function (el) { el.textContent = map[sel]; });
     });
 
-    // logo propio: manda sobre el dibujo por defecto de la portada
+    // logo propio: si no hay ninguno guardado se usa el de la marca.
+    // "none" significa que se quitó a propósito desde el panel.
+    var LOGO_POR_DEFECTO = "assets/logo-real.webp";
+    var logoUrl = (st.logo === "none") ? "" : (st.logo || LOGO_POR_DEFECTO);
+
     var heroLogo = $("[data-hero-logo]");
     if (heroLogo) {
-      var hayLogo = !!st.logo;
+      var hayLogo = !!logoUrl;
       heroLogo.hidden = !hayLogo;
       if (hayLogo) {
-        heroLogo.src = st.logo;
+        heroLogo.src = logoUrl;
         heroLogo.alt = ((st.name || "") + " " + (st.name2 || "")).trim();
         var art = $(".hero-art");
         if (art) {
@@ -1090,49 +1094,69 @@
      6.5 Estar al día sin que el cliente haga nada
      ========================================================================= */
 
-  /* a) Cambios hechos desde el panel en este mismo navegador: se aplican al vuelo */
+  /* Vuelve a pintar la tienda con los datos que haya ahora, sin recargar */
+  function repintarTodo() {
+    data = S.read();
+    safe(applyBrand, "applyBrand");
+    safe(mountFilters, "mountFilters");
+    safe(mountProducts, "mountProducts");
+    safe(applyTeeVisibility, "applyTeeVisibility");
+    safe(mountSizesTable, "mountSizesTable");
+
+    // el diseñador sólo se reinicia si nadie está usándolo ahora mismo
+    var enUso = design && (design.placements.front || design.placements.back);
+    if (!enUso && teeVisible()) safe(initTee, "initTee");
+  }
+
+  /* a) Cambios hechos desde el panel en este mismo navegador: al vuelo */
   function initSyncPanel() {
     if (!S.alCambiar) return;
     S.alCambiar(function (msg) {
       if (!msg || msg.tipo !== "datos") return;
-      data = S.read();
-      safe(applyBrand, "applyBrand");
-      safe(mountFilters, "mountFilters");
-      safe(mountProducts, "mountProducts");
-      safe(applyTeeVisibility, "applyTeeVisibility");
-      safe(mountSizesTable, "mountSizesTable");
+      repintarTodo();
     });
   }
 
-  /* b) Contenido publicado por la dueña desde otro dispositivo: se busca al
-        volver a la página y, si cambió, se recarga para mostrarlo. */
-  function initBuscarPublicaciones() {
-    if (location.protocol === "file:") return;
-    var actual = "";
-    try { actual = JSON.stringify(window.__BRAND__ || {}); } catch (e) { return; }
-    var mirando = false;
+  /* b) Contenido recién publicado por la dueña desde cualquier dispositivo.
+        Se pide SIEMPRE fresco (con marca de tiempo y sin caché) para que
+        ningún teléfono se quede con la versión vieja, ni por la caché del
+        navegador ni por la de GitHub. Se aplica sin recargar la página. */
+  var huellaContenido = "";
 
-    function revisar() {
-      if (mirando || document.hidden) return;
-      mirando = true;
-      fetch("lib/manifest.js?t=" + Date.now(), { cache: "reload" })
-        .then(function (r) { return r.ok ? r.text() : null; })
-        .then(function (txt) {
-          mirando = false;
-          if (!txt) return;
-          var falso = {};
-          try { new Function("window", txt)(falso); } catch (e) { return; }
-          if (!falso.__BRAND__) return;
-          if (JSON.stringify(falso.__BRAND__) === actual) return;
-          location.reload();                       // hay contenido nuevo publicado
-        })
-        .catch(function () { mirando = false; });
-    }
+  function buscarContenidoNuevo(cb) {
+    if (location.protocol === "file:") return cb && cb(false);
+    fetch("lib/manifest.js?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : null; })
+      .then(function (txt) {
+        if (!txt) return cb && cb(false);
+        var falso = {};
+        try { new Function("window", txt)(falso); } catch (e) { return cb && cb(false); }
+        if (!falso.__BRAND__) return cb && cb(false);
 
+        var nueva = JSON.stringify(falso.__BRAND__);
+        if (nueva === huellaContenido) return cb && cb(false);
+
+        huellaContenido = nueva;
+        window.__BRAND__ = falso.__BRAND__;
+        repintarTodo();
+        if (cb) cb(true);
+      })
+      .catch(function () { if (cb) cb(false); });
+  }
+
+  function initContenidoFresco() {
+    try { huellaContenido = JSON.stringify(window.__BRAND__ || {}); } catch (e) { huellaContenido = ""; }
+
+    buscarContenidoNuevo();                       // al abrir
     document.addEventListener("visibilitychange", function () {
-      if (!document.hidden) setTimeout(revisar, 500);
+      if (!document.hidden) setTimeout(buscarContenidoNuevo, 300);
     });
-    window.addEventListener("pageshow", function (e) { if (e.persisted) setTimeout(revisar, 500); });
+    window.addEventListener("pageshow", function (e) { if (e.persisted) buscarContenidoNuevo(); });
+    window.addEventListener("online", buscarContenidoNuevo);
+
+    /* Red de seguridad: aunque el teléfono no avise de que volvió a la
+       pantalla, cada minuto y medio se comprueba si hay algo nuevo. */
+    setInterval(buscarContenidoNuevo, 90000);
   }
 
   /* =========================================================================
@@ -1152,7 +1176,7 @@
     safe(initMagnetic, "initMagnetic");
     safe(initCatalogAuto, "initCatalogAuto");
     safe(initSyncPanel, "initSyncPanel");
-    safe(initBuscarPublicaciones, "initBuscarPublicaciones");
+    safe(initContenidoFresco, "initContenidoFresco");
     if (window.gsap && window.ScrollTrigger) {
       try { gsap.registerPlugin(ScrollTrigger); } catch (_) {}
       safe(initParallax, "initParallax");
