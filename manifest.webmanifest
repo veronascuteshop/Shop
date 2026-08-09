@@ -1,0 +1,35 @@
+{
+  "id": "verona-cute-shop",
+  "name": "Verona's Cute Shop",
+  "short_name": "Verona's",
+  "description": "Maquillaje, Sanrio, accesorios y franelas personalizadas. Envíos a toda Venezuela.",
+  "lang": "es",
+  "dir": "ltr",
+  "start_url": "./index.html?app=1",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#fff6fa",
+  "theme_color": "#ff5fa2",
+  "categories": ["shopping", "lifestyle"],
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Diseñar mi franela",
+      "short_name": "Franelas",
+      "url": "./index.html?app=1#franelas",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Ver catálogo",
+      "short_name": "Catálogo",
+      "url": "./index.html?app=1#catalogo",
+      "icons": [{ "src": "assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

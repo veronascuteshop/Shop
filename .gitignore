@@ -1,0 +1,10 @@
+# Basura del sistema
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Configuración local del editor
+.claude/
+
+# Fotos originales sin procesar (no hacen falta en la web)
+assets/photos/source/
