@@ -111,6 +111,39 @@ persona vio. Los pedidos igual necesitan señal para enviarse por WhatsApp.
 
 ---
 
+## 5.7 Publicarla gratis con GitHub Pages
+
+El código ya está en **https://github.com/veronascuteshop/Shop**. GitHub puede servirte la
+web gratis y **con HTTPS** (que es justo lo que hace falta para que se pueda instalar como app):
+
+1. Entra al repositorio → pestaña **Settings** (arriba a la derecha).
+2. En el menú de la izquierda, **Pages**.
+3. En *Source* elige **Deploy from a branch**.
+4. En *Branch* elige **main** y la carpeta **/ (root)**. Pulsa **Save**.
+5. Espera 1–2 minutos y refresca. Te dará la dirección:
+
+   **https://veronascuteshop.github.io/Shop/**
+
+   El panel queda en **https://veronascuteshop.github.io/Shop/admin.html**
+
+Con eso ya tienes la tienda en línea, con candadito, y las dos apps se pueden instalar.
+Si más adelante compras un dominio propio, se puede conectar desde esa misma pantalla.
+
+### Publicar cambios cuando usas GitHub
+
+1. Panel → **Publicar** → **Descargar manifest.js**.
+2. En GitHub, entra a la carpeta **`lib`** → haz clic en el archivo **`manifest.js`** →
+   botón del lápiz ✏️ → borra todo y pega el contenido nuevo → **Commit changes**.
+   (O usa **Add file → Upload files** y arrastra el archivo descargado encima.)
+3. En 1–2 minutos la web ya muestra los cambios.
+
+> El repositorio es **público**: cualquiera puede leer el código, incluida la clave del panel.
+> Cámbiala por una tuya en *Contenido → Seguridad* y recuerda que no es seguridad real.
+> Si prefieres que nadie vea el código, en *Settings → General → Danger Zone* puedes ponerlo
+> privado — pero entonces GitHub Pages deja de funcionar en cuentas gratuitas.
+
+---
+
 ## 6. Subirla a internet (Hostinger)
 
 1. Entra al **Administrador de archivos** de Hostinger.
