@@ -95,11 +95,11 @@
       if (hayLogo) {
         heroLogo.src = st.logo;
         heroLogo.alt = ((st.name || "") + " " + (st.name2 || "")).trim();
-        var orb = $(".hero-orb"), cara = $(".hero-orb-face");
-        if (orb) orb.style.display = "none";
-        if (cara) cara.style.display = "none";
         var art = $(".hero-art");
-        if (art) art.setAttribute("aria-hidden", "false");
+        if (art) {
+          art.classList.add("has-logo");     // esconde el orbe y los stickers
+          art.setAttribute("aria-hidden", "false");
+        }
       }
     }
 

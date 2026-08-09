@@ -377,11 +377,15 @@ ul { list-style: none; padding: 0; }
   animation: float 6s ease-in-out infinite;
 }
 
-/* logo propio de la tienda en la portada */
+/* logo propio de la tienda en la portada: manda él solo */
+.hero-art.has-logo .hero-orb,
+.hero-art.has-logo .hero-orb-face,
+.hero-art.has-logo .sticker { display: none; }
+
 .hero-logo {
   position: relative; z-index: 1;
-  width: min(88%, 390px); height: auto;
-  filter: drop-shadow(0 18px 34px rgba(214, 96, 152, .28));
+  width: min(100%, 460px); height: auto;
+  filter: drop-shadow(0 16px 30px rgba(214, 96, 152, .22));
   animation: float 7s ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) { .hero-logo { animation: none; } }
@@ -863,6 +867,8 @@ table.sizes-table td:first-child { font-family: var(--display); font-size: 1.05r
   .wa-float { padding: .9rem; }
   .hero-meta span[aria-hidden] { display: none; }
   .hero-meta { gap: .5rem 1rem; }
+  .hero-art.has-logo { min-height: 0; margin-top: -.6rem; }
+  .hero-logo { width: min(80%, 330px); }
 }
 
 /* =============================================================

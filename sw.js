@@ -11,7 +11,7 @@
    ============================================================================= */
 "use strict";
 
-var CACHE = "verona-v8-20260809";
+var CACHE = "verona-v9-20260809";
 
 var SHELL = [
   "./",
@@ -32,6 +32,7 @@ var SHELL = [
   "./admin.webmanifest",
   "./assets/favicon.svg",
   "./assets/logo.svg",
+  "./assets/logo-real.webp",
   "./assets/icon-192.png",
   "./assets/icon-512.png",
   "./assets/admin-icon-192.png",
