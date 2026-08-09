@@ -132,6 +132,25 @@ Acuérdate de pulsar **Publicar en la web** para que el cambio les llegue a tus 
 
 ---
 
+### ¿Cuándo se ven los cambios?
+
+| Dónde | Cuándo se ve |
+|---|---|
+| En el navegador donde editas | **al instante**, apenas guardas (si tienes la tienda abierta en otra pestaña, se actualiza sola) |
+| En los demás teléfonos | al pulsar **Publicar en la web**, en menos de un minuto |
+| En una app ya abierta | cuando la persona vuelve a ella, se busca contenido nuevo sola |
+
+Al publicar, el panel se queda comprobando la web de verdad y te avisa
+**«¡Ya está en línea!»** cuando el cambio llegó. No hay que adivinar.
+
+### Si un teléfono se quedó pegado en la versión vieja
+
+Panel → **Publicar** → apartado 4 → **«Bajar la versión más reciente»**, pulsado *en ese
+teléfono*. Borra los archivos del programa que tenga guardados y los baja de nuevo.
+**No borra productos ni pedidos.** Ahí mismo se ve qué versión tiene instalada el equipo.
+
+---
+
 ## 5. Cómo llegan los pedidos
 
 Cuando un cliente pulsa **«Enviar pedido por WhatsApp»**:

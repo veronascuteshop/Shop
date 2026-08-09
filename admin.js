@@ -979,8 +979,48 @@
 
       setPubState({ huella: huella, fecha: new Date().toISOString(), commit: res.commit });
       pintarEstadoPublicacion();
-      toast("¡Publicado! La web se actualiza en menos de un minuto ✿", "ok");
+      toast("Publicado ✓ Esperando a que la web se actualice…", "ok");
+      esperarAQueEsteEnLinea(huella);
     });
+  }
+
+  /* Comprueba la web de verdad hasta ver el contenido nuevo, y avisa.
+     Así no hay que adivinar si el cambio ya llegó. */
+  function esperarAQueEsteEnLinea(huella) {
+    if (location.protocol === "file:") return;
+    var intentos = 0;
+    var texto = $("[data-pub-text]");
+    var mostrar = function (t) { if (texto) texto.textContent = t; };
+
+    (function mirar() {
+      intentos++;
+      fetch("lib/manifest.js?t=" + Date.now(), { cache: "reload" })
+        .then(function (r) { return r.ok ? r.text() : null; })
+        .then(function (txt) {
+          var ok = false;
+          if (txt) {
+            var falso = {};
+            try {
+              new Function("window", txt)(falso);
+              ok = falso.__BRAND__ && VCS_GH.fingerprint(S.contentJSON(falso.__BRAND__)) === huella;
+            } catch (e) { ok = false; }
+          }
+          if (ok) {
+            toast("¡Ya está en línea! Tus clientes ya ven los cambios ✿", "ok");
+            pintarEstadoPublicacion();
+            return;
+          }
+          if (intentos >= 20) {                    // ~100 segundos
+            mostrar("Publicado. La web puede tardar un par de minutos más en mostrarlo.");
+            return;
+          }
+          mostrar("Publicado ✓ Esperando a que la web se actualice… (" + intentos * 5 + "s)");
+          setTimeout(mirar, 5000);
+        })
+        .catch(function () {
+          if (intentos < 20) setTimeout(mirar, 5000);
+        });
+    })();
   }
 
   function irAPublicar() {
@@ -1095,6 +1135,24 @@
       r.readAsText(f);
       this.value = "";
     });
+
+    var forzar = $("[data-forzar-actualizacion]");
+    if (forzar) forzar.addEventListener("click", function () {
+      if (!window.VCS_PWA || !VCS_PWA.forzarActualizacion) { location.reload(); return; }
+      forzar.disabled = true;
+      forzar.textContent = "Bajando…";
+      VCS_PWA.forzarActualizacion();
+    });
+
+    // versión que tiene instalada este equipo
+    var ver = $("[data-version-app]");
+    if (ver) {
+      if (window.caches) {
+        caches.keys().then(function (k) {
+          ver.textContent = (k[0] || "sin instalar todavía");
+        }).catch(function () { ver.textContent = "desconocida"; });
+      } else { ver.textContent = "sin service worker"; }
+    }
 
     var rst = $("[data-reset]");
     if (rst) rst.addEventListener("click", function () {

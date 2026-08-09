@@ -20,8 +20,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Quicksand:wght@500;600;700&family=Caveat:wght@600;700&display=swap" />
-<link rel="stylesheet" href="styles.css?v=20260809" />
-<link rel="stylesheet" href="admin.css?v=20260809" />
+<link rel="stylesheet" href="styles.css?v=20260809b" />
+<link rel="stylesheet" href="admin.css?v=20260809b" />
 </head>
 
 <body class="admin" data-install-banner="el panel de administración" data-install-icon="assets/admin-icon-192.png">
@@ -379,8 +379,17 @@
           <button class="tiny-btn danger" type="button" data-reset>Restablecer contenido</button>
         </div>
 
+        <div class="box">
+          <h3>4 · ¿Un teléfono se quedó con la versión vieja?</h3>
+          <p class="sub">La app se actualiza sola al abrirla. Si aun así algún equipo sigue mostrando
+             lo anterior, abre el panel <b>en ese teléfono</b> y pulsa este botón: borra lo que tenga
+             guardado del programa y lo baja de nuevo. <b>No borra productos ni pedidos.</b></p>
+          <button class="tiny-btn danger" type="button" data-forzar-actualizacion>Bajar la versión más reciente</button>
+          <p class="sub" style="margin-top:.6rem">Versión instalada: <b data-version-app>…</b></p>
+        </div>
+
         <div class="note">
-          <b>Consejo:</b> cada vez que subas archivos nuevos a tu hosting, cambia el número <code>?v=20260809</code>
+          <b>Consejo:</b> cada vez que subas archivos nuevos a tu hosting, cambia el número <code>?v=20260809b</code>
           por la fecha del día en <code>index.html</code> y <code>admin.html</code>. Así los clientes ven la versión nueva
           sin tener que borrar caché.
         </div>
@@ -399,11 +408,11 @@
 <div class="sticky-save" data-saved><span>Guardado ✓</span></div>
 <div class="toast-wrap" data-toasts aria-live="polite"></div>
 
-<script defer src="lib/manifest.js?v=20260809"></script>
-<script defer src="lib/store.js?v=20260809"></script>
-<script defer src="lib/tee.js?v=20260809"></script>
-<script defer src="lib/github.js?v=20260809"></script>
-<script defer src="lib/pwa.js?v=20260809"></script>
-<script defer src="admin.js?v=20260809"></script>
+<script defer src="lib/manifest.js?v=20260809b"></script>
+<script defer src="lib/store.js?v=20260809b"></script>
+<script defer src="lib/tee.js?v=20260809b"></script>
+<script defer src="lib/github.js?v=20260809b"></script>
+<script defer src="lib/pwa.js?v=20260809b"></script>
+<script defer src="admin.js?v=20260809b"></script>
 </body>
 </html>

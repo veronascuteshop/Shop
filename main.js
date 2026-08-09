@@ -1087,6 +1087,55 @@
   }
 
   /* =========================================================================
+     6.5 Estar al día sin que el cliente haga nada
+     ========================================================================= */
+
+  /* a) Cambios hechos desde el panel en este mismo navegador: se aplican al vuelo */
+  function initSyncPanel() {
+    if (!S.alCambiar) return;
+    S.alCambiar(function (msg) {
+      if (!msg || msg.tipo !== "datos") return;
+      data = S.read();
+      safe(applyBrand, "applyBrand");
+      safe(mountFilters, "mountFilters");
+      safe(mountProducts, "mountProducts");
+      safe(applyTeeVisibility, "applyTeeVisibility");
+      safe(mountSizesTable, "mountSizesTable");
+    });
+  }
+
+  /* b) Contenido publicado por la dueña desde otro dispositivo: se busca al
+        volver a la página y, si cambió, se recarga para mostrarlo. */
+  function initBuscarPublicaciones() {
+    if (location.protocol === "file:") return;
+    var actual = "";
+    try { actual = JSON.stringify(window.__BRAND__ || {}); } catch (e) { return; }
+    var mirando = false;
+
+    function revisar() {
+      if (mirando || document.hidden) return;
+      mirando = true;
+      fetch("lib/manifest.js?t=" + Date.now(), { cache: "reload" })
+        .then(function (r) { return r.ok ? r.text() : null; })
+        .then(function (txt) {
+          mirando = false;
+          if (!txt) return;
+          var falso = {};
+          try { new Function("window", txt)(falso); } catch (e) { return; }
+          if (!falso.__BRAND__) return;
+          if (JSON.stringify(falso.__BRAND__) === actual) return;
+          location.reload();                       // hay contenido nuevo publicado
+        })
+        .catch(function () { mirando = false; });
+    }
+
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden) setTimeout(revisar, 500);
+    });
+    window.addEventListener("pageshow", function (e) { if (e.persisted) setTimeout(revisar, 500); });
+  }
+
+  /* =========================================================================
      7. Arranque
      ========================================================================= */
   function boot() {
@@ -1102,6 +1151,8 @@
     safe(initReveals, "initReveals");
     safe(initMagnetic, "initMagnetic");
     safe(initCatalogAuto, "initCatalogAuto");
+    safe(initSyncPanel, "initSyncPanel");
+    safe(initBuscarPublicaciones, "initBuscarPublicaciones");
     if (window.gsap && window.ScrollTrigger) {
       try { gsap.registerPlugin(ScrollTrigger); } catch (_) {}
       safe(initParallax, "initParallax");
