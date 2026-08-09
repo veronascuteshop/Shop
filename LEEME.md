@@ -214,6 +214,9 @@ La carpeta `tools/` es solo para pruebas locales: **no hace falta subirla**.
 en `index.html` y en `admin.html` (búscalo con Ctrl+F, aparece unas 8 veces). Eso obliga al
 navegador de tus clientes a cargar la versión nueva en vez de la guardada en caché.
 
+> Esto solo hace falta si cambias los archivos del programa. Lo que editas desde el panel
+> (productos, precios, textos) se ve enseguida sin tocar nada.
+
 ---
 
 ## 6.5 Si una foto no se deja subir

@@ -11,7 +11,7 @@
    ============================================================================= */
 "use strict";
 
-var CACHE = "verona-v6-20260809";
+var CACHE = "verona-v7-20260809";
 
 var SHELL = [
   "./",
@@ -89,9 +89,23 @@ self.addEventListener("fetch", function (e) {
     return;
   }
 
-  /* El contenido de la tienda se pide siempre fresco: así, apenas publicas
-     desde el panel, los clientes ven el cambio sin esperar el caché. */
-  var pedido = /\/lib\/manifest\.js/.test(url.pathname) ? new Request(req, { cache: "reload" }) : req;
+  /* Las páginas y el código se piden siempre frescos, saltando el caché del
+     navegador. Así, apenas publicas un cambio, se ve enseguida y nadie tiene
+     que hacer Ctrl+Shift+R. Las imágenes sí se siguen guardando (pesan y casi
+     nunca cambian). */
+  var siempreFresco = req.mode === "navigate" ||
+    /\.(html|js|css|webmanifest|json)$/.test(url.pathname) ||
+    url.pathname === "/" || /\/$/.test(url.pathname);
+
+  var pedido = req;
+  if (siempreFresco) {
+    try {
+      // las peticiones de navegación no se pueden clonar: se rehacen desde la URL
+      pedido = (req.mode === "navigate")
+        ? new Request(url.href, { cache: "reload", credentials: "same-origin", redirect: "follow" })
+        : new Request(req, { cache: "reload" });
+    } catch (e) { pedido = req; }
+  }
 
   /* Propio: primero internet, si falla lo guardado */
   e.respondWith(
