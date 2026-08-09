@@ -35,7 +35,7 @@ Entra al panel → pestaña **Contenido**:
 | **Pedidos** | Ver los pedidos, cambiar su estado, ver el diseño de las franelas, exportarlos. |
 | **Productos** | Agregar, editar, duplicar, reordenar y borrar productos. Sube fotos (se comprimen solas). |
 | **Categorías** | Los filtros que ve el cliente arriba del catálogo. Cada una tiene un **interruptor** para mostrarla u ocultarla sin borrar nada. |
-| **Franelas** | Precio base, colores, tallas con sus medidas y zonas de estampado. |
+| **Franelas** | Precio base, colores, tallas con sus medidas y zonas de estampado. Tiene un **interruptor** arriba para mostrar u ocultar toda la sección. |
 | **Contenido** | Nombre, portada, contacto, envíos, pagos, "nosotros", preguntas y clave. |
 | **Publicar** | Descargar el archivo para que los cambios se vean en internet + respaldos. |
 
@@ -98,6 +98,16 @@ En **Categorías**, cada fila tiene un interruptor rosado a la derecha:
 
 Sirve para cuando se te acaba el inventario de algo, o para preparar una categoría nueva con
 calma antes de mostrarla. Nada se borra: al volver a encenderla reaparece todo tal cual estaba.
+
+### Ocultar la sección de franelas
+
+En la pestaña **Franelas**, arriba a la derecha, hay otro interruptor igual. Al apagarlo
+desaparece de la tienda **toda la sección**: el diseñador, la guía de tallas, el botón
+«Diseñar mi franela» de la portada y los enlaces del menú y del pie. Útil si te quedas sin
+material o si prefieres no ofrecerlas por un tiempo.
+
+Dos textos que quedan a tu cargo, porque son tuyos y se editan en **Contenido**:
+la frase de bienvenida (menciona las franelas) y la cinta de anuncios de arriba.
 
 Acuérdate de pulsar **Publicar en la web** para que el cambio les llegue a tus clientes.
 

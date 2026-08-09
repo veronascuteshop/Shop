@@ -550,6 +550,39 @@
   }
 
   /* =============================================================== FRANELAS */
+  function pintarTeeOnOff() {
+    var on = (data.tees || {}).active !== false;
+    var sw = $("[data-tee-toggle]");
+    if (sw) {
+      sw.classList.toggle("is-on", on);
+      sw.setAttribute("aria-checked", on ? "true" : "false");
+      sw.title = on ? "Ocultar la sección de franelas" : "Mostrar la sección de franelas";
+    }
+    var txt = $("[data-tee-onoff-text]");
+    if (txt) {
+      txt.textContent = on ? "Se ve en la tienda" : "Oculta";
+      var caja = txt.closest(".onoff");
+      if (caja) caja.classList.toggle("is-off", !on);
+    }
+    var nota = $("[data-tee-off-note]");
+    if (nota) nota.hidden = on;
+    var panel = $('[data-panel="franelas"]');
+    if (panel) panel.classList.toggle("is-off", !on);
+  }
+
+  function bindTeeOnOff() {
+    var sw = $("[data-tee-toggle]");
+    if (!sw) return;
+    sw.addEventListener("click", function () {
+      data.tees.active = (data.tees.active === false);
+      save(true);
+      pintarTeeOnOff();
+      toast(data.tees.active
+        ? "Las franelas vuelven a verse en la tienda"
+        : "Sección de franelas oculta. Publica para que se aplique.", "ok");
+    });
+  }
+
   function bindTeeFields() {
     $$("[data-tee]").forEach(function (el) {
       var key = el.getAttribute("data-tee");
@@ -1027,6 +1060,8 @@
     safe(renderCats, "renderCats");
     safe(bindCats, "bindCats");
     safe(bindTeeFields, "bindTeeFields");
+    safe(pintarTeeOnOff, "pintarTeeOnOff");
+    safe(bindTeeOnOff, "bindTeeOnOff");
     safe(renderColors, "renderColors");
     safe(renderSizes, "renderSizes");
     safe(renderZones, "renderZones");

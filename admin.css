@@ -184,6 +184,18 @@ body.admin { background: #fdf7fa; }
 .switch.is-on .switch-knob { transform: translateX(22px); }
 .switch:hover { filter: brightness(1.05); }
 
+.onoff {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .5rem .55rem .5rem .95rem; border-radius: 99px;
+  background: #fff; border: 2px solid var(--line);
+  font-weight: 800; font-size: .84rem; color: var(--ink-soft);
+}
+.onoff.is-off { color: #b02a4d; border-color: #ffc2d2; background: #fff6f9; }
+
+/* cuando la sección está apagada, sus ajustes se ven atenuados */
+.panel.is-off .box { opacity: .55; }
+.panel.is-off .box:hover { opacity: 1; }
+
 .list-item.is-hidden { background: #faf6f8; border-style: dashed; }
 .list-item.is-hidden .list-thumb,
 .list-item.is-hidden .list-info input { opacity: .5; }

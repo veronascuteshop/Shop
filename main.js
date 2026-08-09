@@ -405,7 +405,25 @@
     return ((data.tees || {}).zones || []).filter(function (z) { return z.side === side; });
   }
 
+  /* La sección de franelas se puede apagar desde el panel: se esconde la
+     sección entera y todos los enlaces que llevan a ella. */
+  function teeVisible() {
+    return (data.tees || {}).active !== false;
+  }
+
+  function applyTeeVisibility() {
+    var on = teeVisible();
+    var sec = document.getElementById("franelas");
+    if (sec) sec.hidden = !on;
+    $$('a[href="#franelas"], a[href="#medidas"], [data-tee-only]').forEach(function (el) {
+      var host = el.closest("li") || el;
+      host.hidden = !on;
+    });
+    return on;
+  }
+
   function initTee() {
+    if (!teeVisible()) return;
     var svg = $("[data-tee-svg]");
     if (!svg || !TEE) return;
     var t = data.tees || {};
@@ -1059,6 +1077,7 @@
     safe(applyBrand, "applyBrand");
     safe(mountFilters, "mountFilters");
     safe(mountProducts, "mountProducts");
+    safe(applyTeeVisibility, "applyTeeVisibility");
     safe(initTee, "initTee");
     safe(bindCart, "bindCart");
     safe(renderCart, "renderCart");
