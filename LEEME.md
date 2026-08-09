@@ -191,6 +191,26 @@ navegador de tus clientes a cargar la versión nueva en vez de la guardada en ca
 
 ---
 
+## 6.5 Si una foto no se deja subir
+
+El navegador tiene que poder **abrir** la foto para poder achicarla. Si sale un aviso al subirla:
+
+- **«Esa foto está en formato HEIC»** → es el formato con el que graba el iPhone y solo Apple
+  lo entiende. Dos soluciones:
+  - **Para las fotos nuevas:** iPhone → *Ajustes* → *Cámara* → *Formatos* → **Más compatible**.
+    Desde ahí graba en JPG y no vuelve a pasar.
+  - **Para las que ya tienes:** reenvíatelas por WhatsApp a ti misma y guarda esa copia — WhatsApp
+    las convierte a JPG. También sirve abrirlas y usar *Editar → Guardar copia*.
+- **«No se pudo abrir la imagen»** → el archivo está dañado o es un formato raro. Ábrelo, hazle
+  una captura de pantalla y sube la captura.
+- **«La foto pesa X MB»** → es demasiado pesada. Una captura de pantalla o una foto normal del
+  teléfono sirve perfecto; no hace falta calidad de cámara profesional.
+
+Las fotos se achican solas a 900 píxeles antes de guardarse, así que no te preocupes por el peso
+mientras el navegador pueda abrirlas.
+
+---
+
 ## 7. Cosas que conviene saber
 
 - **La clave `0000` no es seguridad real.** Protege el panel de un curioso, pero cualquiera con

@@ -38,11 +38,14 @@
     el.className = "toast " + (kind || "");
     el.textContent = msg;
     wrap.appendChild(el);
-    setTimeout(function () {
+    var dura = Math.min(14000, Math.max(3200, String(msg).length * 65));
+    var cerrar = function () {
       el.style.transition = "opacity .4s, transform .4s";
       el.style.opacity = "0"; el.style.transform = "translateY(14px)";
       setTimeout(function () { el.remove(); }, 420);
-    }, 3200);
+    };
+    el.addEventListener("click", cerrar);
+    setTimeout(cerrar, dura);
   }
 
   function waLink(text) {

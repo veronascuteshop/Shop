@@ -697,8 +697,9 @@ table.sizes-table td:first-child { font-family: var(--display); font-size: 1.05r
 .toast-wrap { position: fixed; left: 50%; bottom: 1.2rem; z-index: 200; transform: translateX(-50%); display: grid; gap: .5rem; width: min(94vw, 420px); }
 .toast {
   padding: .85rem 1.1rem; border-radius: var(--r); background: var(--ink); color: #fff;
-  font-weight: 700; font-size: .92rem; box-shadow: var(--shadow-lg);
-  display: flex; gap: .6rem; align-items: center;
+  font-weight: 700; font-size: .92rem; line-height: 1.45; box-shadow: var(--shadow-lg);
+  display: flex; gap: .6rem; align-items: center; text-align: left;
+  text-wrap: pretty; cursor: pointer;
   animation: toastIn .4s var(--ease-bounce);
 }
 .toast.ok { background: #1f9d76; }

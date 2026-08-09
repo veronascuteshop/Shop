@@ -23,7 +23,14 @@
     el.className = "toast " + (kind || "");
     el.textContent = msg;
     wrap.appendChild(el);
-    setTimeout(function () { el.style.opacity = "0"; setTimeout(function () { el.remove(); }, 400); }, 2800);
+    // los mensajes largos se quedan más tiempo para poder leerlos
+    var dura = Math.min(14000, Math.max(2800, String(msg).length * 65));
+    var cerrar = function () {
+      el.style.opacity = "0";
+      setTimeout(function () { el.remove(); }, 400);
+    };
+    el.addEventListener("click", cerrar);
+    setTimeout(cerrar, dura);
   }
 
   var savedTimer = null;
