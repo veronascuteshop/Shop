@@ -139,9 +139,12 @@ Acuérdate de pulsar **Publicar en la web** para que el cambio les llegue a tus 
 | En los demás teléfonos | al **publicar**: aparece en menos de un minuto, sin que nadie recargue |
 | En una app abierta en otro teléfono | sola, al volver a la pantalla o como mucho en minuto y medio |
 
-**Publicar solo:** en *Publicar* hay una casilla llamada **«Publicar solo»**. Si la activas, cada
-cambio que guardes sale a la web por su cuenta unos segundos después. Así no tienes que
-acordarte de pulsar nada nunca más.
+**Publicar solo:** al conectar por primera vez se activa sola la casilla **«Publicar solo»**.
+Desde ese momento cada cambio que guardes sale a la web por su cuenta unos segundos después:
+no tienes que pulsar nada nunca más. El botón sigue ahí por si quieres empujarlo a mano.
+
+La pestaña *Publicar* solo tiene el botón grande y ese aviso. Todo lo demás (respaldos,
+reconectar, ajustes técnicos) está guardado dentro de **«Más opciones»**.
 
 Al publicar, el panel se queda comprobando la web de verdad y te avisa
 **«¡Ya está en línea!»** cuando el cambio llegó. No hay que adivinar.

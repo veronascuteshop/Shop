@@ -301,10 +301,10 @@
           </div>
         </div>
 
-        <div class="box">
-          <h3>1 · Publicar</h3>
-          <p class="sub">Conecta el panel una sola vez. Después, publicar es un toque —o ninguno,
-             si activas «Publicar solo»— y la web se actualiza sola en menos de un minuto.</p>
+        <div class="box publicar-caja">
+          <button class="btn btn-primary btn-block btn-publicar" type="button" data-publish-now>
+            Publicar en la web 🚀
+          </button>
 
           <div class="pub-state" data-pub-state>
             <span class="pub-dot"></span>
@@ -315,10 +315,12 @@
             <input type="checkbox" data-auto-publicar />
             <span><b>Publicar solo</b> — cada cambio que guardes sale a la web sin que pulses nada</span>
           </label>
+        </div>
 
+        <details class="box mas-opciones">
+          <summary>Más opciones</summary>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.9rem">
-            <button class="btn btn-primary" type="button" data-publish-now>Publicar en la web 🚀</button>
-            <button class="tiny-btn" type="button" data-gh-wizard>Conectar (una sola vez)</button>
+            <button class="tiny-btn" type="button" data-gh-wizard>Volver a conectar</button>
             <button class="tiny-btn" type="button" data-gh-toggle>Ajustes avanzados</button>
             <button class="tiny-btn" type="button" data-export-manifest>Descargar el archivo</button>
             <button class="tiny-btn" type="button" data-preview-manifest>Ver el contenido</button>
@@ -368,37 +370,31 @@
               </p>
             </details>
           </div>
-        </div>
 
-        <div class="box">
-          <h3>2 · Copia de seguridad</h3>
+          <hr style="border:0;border-top:2px solid var(--line);margin:1.2rem 0" />
+
+          <h4>Copia de seguridad</h4>
           <p class="sub">Guarda un respaldo con todo (productos, franelas, ajustes y pedidos) o restaura uno anterior.</p>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap">
             <button class="tiny-btn solid" type="button" data-backup>Descargar respaldo</button>
             <label class="tiny-btn">Restaurar respaldo<input type="file" accept="application/json" hidden data-restore /></label>
           </div>
-        </div>
 
-        <div class="box">
-          <h3>3 · Volver a empezar</h3>
-          <p class="sub">Borra los cambios guardados en este navegador y vuelve al contenido del archivo manifest.js.</p>
-          <button class="tiny-btn danger" type="button" data-reset>Restablecer contenido</button>
-        </div>
+          <hr style="border:0;border-top:2px solid var(--line);margin:1.2rem 0" />
 
-        <div class="box">
-          <h3>4 · ¿Un teléfono se quedó con la versión vieja?</h3>
+          <h4>¿Un teléfono se quedó con la versión vieja?</h4>
           <p class="sub">La app se actualiza sola al abrirla. Si aun así algún equipo sigue mostrando
-             lo anterior, abre el panel <b>en ese teléfono</b> y pulsa este botón: borra lo que tenga
-             guardado del programa y lo baja de nuevo. <b>No borra productos ni pedidos.</b></p>
+             lo anterior, abre el panel <b>en ese teléfono</b> y pulsa este botón. <b>No borra productos ni pedidos.</b></p>
           <button class="tiny-btn danger" type="button" data-forzar-actualizacion>Bajar la versión más reciente</button>
           <p class="sub" style="margin-top:.6rem">Versión instalada: <b data-version-app>…</b></p>
-        </div>
 
-        <div class="note">
-          <b>Consejo:</b> cada vez que subas archivos nuevos a tu hosting, cambia el número <code>?v=20260809b</code>
-          por la fecha del día en <code>index.html</code> y <code>admin.html</code>. Así los clientes ven la versión nueva
-          sin tener que borrar caché.
-        </div>
+          <hr style="border:0;border-top:2px solid var(--line);margin:1.2rem 0" />
+
+          <h4>Volver a empezar</h4>
+          <p class="sub">Borra los cambios guardados en este teléfono y vuelve al contenido publicado.</p>
+          <button class="tiny-btn danger" type="button" data-reset>Restablecer contenido</button>
+        </details>
+
       </section>
 
     </div>

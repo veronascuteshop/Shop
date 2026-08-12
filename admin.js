@@ -58,6 +58,19 @@
   var AUTO_KEY = "vcs_autopub";
   var autoTimer = null;
 
+  /* Le pide al navegador que no borre lo guardado cuando le falte espacio.
+     Sin esto, algunos teléfonos vacían el almacén y hay que volver a
+     conectar (y se perderían productos y pedidos). */
+  function pedirAlmacenamientoPermanente() {
+    try {
+      if (navigator.storage && navigator.storage.persist) {
+        navigator.storage.persisted().then(function (ya) {
+          if (!ya) navigator.storage.persist();
+        }).catch(function () {});
+      }
+    } catch (e) {}
+  }
+
   function autoPublicarActivo() {
     try { return localStorage.getItem(AUTO_KEY) === "1"; } catch (e) { return false; }
   }
@@ -943,12 +956,14 @@
     var texto, clase, corto;
     if (!conectado) {
       clase = "off";
-      texto = "Toca «Publicar en la web» y te guío para dejarlo listo (una sola vez).";
-      corto = "Falta conectar";
+      texto = "Toca el botón y te guío. Son dos toques y no se vuelve a pedir.";
+      corto = "Toca para empezar";
     } else if (pendiente) {
       clase = "pending";
-      texto = "Tienes cambios sin publicar." + (st.fecha ? " Última publicación " + cuando(st.fecha) + "." : "");
-      corto = "Cambios sin publicar";
+      texto = autoPublicarActivo()
+        ? "Guardando… sale a la web en unos segundos."
+        : "Tienes cambios sin publicar." + (st.fecha ? " Última publicación " + cuando(st.fecha) + "." : "");
+      corto = autoPublicarActivo() ? "Publicando…" : "Cambios sin publicar";
     } else {
       clase = "ok";
       texto = "Todo publicado ✓" + (st.fecha ? " · " + cuando(st.fecha) : "");
@@ -1174,6 +1189,15 @@
             probando = false;
             if (err) { decir(err, false); return; }
             decir("¡Conectado con " + info.repo + "! ✓", true);
+
+            /* Al conectar se activa el publicado automático: a partir de aquí
+               no hay que pulsar nada más, y se pide al navegador que no borre
+               lo guardado para no tener que volver a conectar nunca. */
+            try { localStorage.setItem(AUTO_KEY, "1"); } catch (e) {}
+            var casilla = $("[data-auto-publicar]");
+            if (casilla) casilla.checked = true;
+            pedirAlmacenamientoPermanente();
+
             pintarEstadoPublicacion();
             setTimeout(function () {
               closeEdit();
@@ -1386,6 +1410,7 @@
     safe(bindPublish, "bindPublish");
     safe(bindGitHub, "bindGitHub");
     safe(pintarEstadoPublicacion, "pintarEstadoPublicacion");
+    safe(pedirAlmacenamientoPermanente, "pedirAlmacenamientoPermanente");
     if (data.settings) {
       if (data.settings.accent) document.documentElement.style.setProperty("--accent", data.settings.accent);
       if (data.settings.accent2) document.documentElement.style.setProperty("--accent-2", data.settings.accent2);

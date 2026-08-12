@@ -224,6 +224,21 @@ body.admin { background: #fdf7fa; }
 .side-publish-state.pending { color: #b07600; }
 .side-publish-state.ok { color: #1f9d76; }
 
+/* La caja de publicar: el botón manda, lo demás es secundario */
+.publicar-caja { padding: 1.4rem 1.2rem; }
+.btn-publicar { font-size: 1.15rem; padding: 1.1rem 1.5rem; }
+.publicar-caja .pub-state { margin-top: .9rem; }
+
+.mas-opciones > summary {
+  cursor: pointer; font-family: var(--display); font-weight: 600;
+  font-size: 1rem; color: var(--ink-soft); list-style: none;
+  display: flex; align-items: center; gap: .5rem;
+}
+.mas-opciones > summary::after { content: "▾"; color: var(--accent); }
+.mas-opciones[open] > summary::after { content: "▴"; }
+.mas-opciones > summary::-webkit-details-marker { display: none; }
+.mas-opciones h4 { font-family: var(--display); font-size: 1rem; margin-bottom: .2rem; }
+
 .auto-pub {
   display: flex; align-items: center; gap: .6rem; cursor: pointer;
   margin-top: .7rem; padding: .7rem .9rem; border-radius: var(--r);
