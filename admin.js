@@ -53,8 +53,6 @@
     if (now) run(); else saveTimer = setTimeout(run, 350);
   }
 
-  /* Publicar solo: unos segundos después del último cambio, sale a la web.
-     Se espera un poco para no publicar en mitad de una edición. */
   var AUTO_KEY = "vcs_autopub";
   var autoTimer = null;
 
@@ -71,19 +69,10 @@
     } catch (e) {}
   }
 
-  function autoPublicarActivo() {
-    try { return localStorage.getItem(AUTO_KEY) === "1"; } catch (e) { return false; }
-  }
-
-  function programarPublicacionAutomatica() {
-    if (!autoPublicarActivo()) return;
-    if (!window.VCS_GH || !VCS_GH.isReady()) return;
-    clearTimeout(autoTimer);
-    autoTimer = setTimeout(function () {
-      if (publicando || !hayCambiosSinPublicar()) return;
-      publicarAhora(null);
-    }, 8000);
-  }
+  /* El publicado automático quedó retirado de la vista: sólo se usa el botón.
+     Se conserva apagado por si alguna versión antigua lo dejó encendido. */
+  function autoPublicarActivo() { return false; }
+  function programarPublicacionAutomatica() { clearTimeout(autoTimer); }
 
   function saveOrders() {
     var res = S.setOrders(orders);
@@ -960,10 +949,9 @@
       corto = "Toca para empezar";
     } else if (pendiente) {
       clase = "pending";
-      texto = autoPublicarActivo()
-        ? "Guardando… sale a la web en unos segundos."
-        : "Tienes cambios sin publicar." + (st.fecha ? " Última publicación " + cuando(st.fecha) + "." : "");
-      corto = autoPublicarActivo() ? "Publicando…" : "Cambios sin publicar";
+      texto = "Tienes cambios sin publicar. Toca el botón." +
+        (st.fecha ? " Última publicación " + cuando(st.fecha) + "." : "");
+      corto = "Cambios sin publicar";
     } else {
       clase = "ok";
       texto = "Todo publicado ✓" + (st.fecha ? " · " + cuando(st.fecha) : "");
@@ -1190,12 +1178,8 @@
             if (err) { decir(err, false); return; }
             decir("¡Conectado con " + info.repo + "! ✓", true);
 
-            /* Al conectar se activa el publicado automático: a partir de aquí
-               no hay que pulsar nada más, y se pide al navegador que no borre
-               lo guardado para no tener que volver a conectar nunca. */
-            try { localStorage.setItem(AUTO_KEY, "1"); } catch (e) {}
-            var casilla = $("[data-auto-publicar]");
-            if (casilla) casilla.checked = true;
+            /* Se pide al navegador que no borre lo guardado, para no tener
+               que volver a conectar nunca más en este teléfono. */
             pedirAlmacenamientoPermanente();
 
             pintarEstadoPublicacion();
@@ -1241,20 +1225,7 @@
     var asistente = $("[data-gh-wizard]");
     if (asistente) asistente.addEventListener("click", function () { abrirAsistenteGitHub(null); });
 
-    var auto = $("[data-auto-publicar]");
-    if (auto) {
-      auto.checked = autoPublicarActivo();
-      auto.addEventListener("change", function () {
-        try { localStorage.setItem(AUTO_KEY, auto.checked ? "1" : "0"); } catch (e) {}
-        if (!auto.checked) { clearTimeout(autoTimer); toast("Publicar solo: desactivado", "ok"); return; }
-        if (!window.VCS_GH || !VCS_GH.isReady()) {
-          abrirAsistenteGitHub(function () { programarPublicacionAutomatica(); });
-          return;
-        }
-        toast("Listo: cada cambio saldrá solo a la web ✿", "ok");
-        programarPublicacionAutomatica();
-      });
-    }
+    try { localStorage.removeItem(AUTO_KEY); } catch (e) {}
 
     if (!window.VCS_GH) return;
 

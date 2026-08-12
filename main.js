@@ -1155,8 +1155,8 @@
     window.addEventListener("online", buscarContenidoNuevo);
 
     /* Red de seguridad: aunque el teléfono no avise de que volvió a la
-       pantalla, cada minuto y medio se comprueba si hay algo nuevo. */
-    setInterval(buscarContenidoNuevo, 90000);
+       pantalla, cada 45 segundos se comprueba si hay algo nuevo. */
+    setInterval(buscarContenidoNuevo, 45000);
   }
 
   /* =========================================================================
